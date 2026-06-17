@@ -14,56 +14,68 @@ export async function handleAppMentioned({ client, context, event, logger, say, 
     const threadTs = event.thread_ts || event.ts;
     const userId = /** @type {string} */ (context.userId);
 
-    // Strip the bot mention from the text
     const cleanedText = text.replace(/<@[A-Z0-9]+>/g, '').trim();
     const lowerText = cleanedText.toLowerCase();
 
     if (!cleanedText) {
       await say({
-        text: "Hey there! How can I help you? Ask me anything and I'll do my best.",
+        text: 'Atlas is ready. Try `analyze this channel`, `risks`, `scorecard`, or `map this channel`.',
         thread_ts: threadTs,
       });
       return;
     }
 
-    // Set assistant thread status with loading messages
     await setStatus({
       status: 'Analyzing workspace signals…',
       loading_messages: [
         'Reading recent channel activity…',
         'Looking for repeated questions…',
         'Detecting workflow bottlenecks…',
-        'Mapping organizational risk signals…',
+        'Mapping organizational dependencies…',
         'Preparing Atlas intelligence report…',
       ],
     });
 
-    // Special path: real Slack channel analysis using bot token
+    const runAndStream = async (agentInput) => {
+      const deps = new AgentDeps(client, userId, channelId, threadTs, event.ts, context.userToken);
+      const result = await runAgent(agentInput, deps);
+
+      const streamer = sayStream();
+      await streamer.append({ markdown_text: result.finalOutput });
+      const feedbackBlocks = buildFeedbackBlocks();
+      await streamer.stop({ blocks: feedbackBlocks });
+
+      conversationStore.setHistory(channelId, threadTs, result.history);
+    };
+
+    const getRecentChannelMessages = async (limit = 100, sliceLimit = 60) => {
+      try {
+        const historyResult = await client.conversations.history({
+          channel: channelId,
+          limit,
+        });
+
+        return (historyResult.messages || [])
+          .filter((m) => m.text && !m.bot_id)
+          .slice(0, sliceLimit)
+          .map((m, i) => {
+            const user = m.user ? `<@${m.user}>` : 'unknown_user';
+            const messageText = m.text.replace(/\s+/g, ' ').trim();
+            return `${i + 1}. ${user}: ${messageText}`;
+          });
+      } catch (historyError) {
+        logger.error(`Failed to read channel history: ${historyError}`);
+        return [];
+      }
+    };
+
     if (
       lowerText.includes('analyze this channel') ||
       lowerText.includes('scan this channel') ||
       lowerText.includes('analyze current channel') ||
       lowerText.includes('analyze #')
     ) {
-      let messages = [];
-
-      try {
-        const historyResult = await client.conversations.history({
-          channel: channelId,
-          limit: 75,
-        });
-
-        messages = (historyResult.messages || [])
-          .filter((m) => m.text && !m.bot_id)
-          .slice(0, 50)
-          .map((m, i) => {
-            const user = m.user ? `<@${m.user}>` : 'unknown_user';
-            const text = m.text.replace(/\s+/g, ' ').trim();
-            return `${i + 1}. ${user}: ${text}`;
-          });
-      } catch (historyError) {
-        logger.error(`Failed to read channel history: ${historyError}`);
-      }
+      const messages = await getRecentChannelMessages(75, 50);
 
       const realSlackInput = `
 You are Atlas, an AI Organizational Intelligence Platform.
@@ -81,32 +93,72 @@ Real Slack Channel Messages:
 ${messages.length > 0 ? messages.join('\n') : 'No readable user messages found.'}
 `;
 
-      const deps = new AgentDeps(client, userId, channelId, threadTs, event.ts, context.userToken);
-      const result = await runAgent(realSlackInput, deps);
-
-      const streamer = sayStream();
-      await streamer.append({ markdown_text: result.finalOutput });
-      const feedbackBlocks = buildFeedbackBlocks();
-      await streamer.stop({ blocks: feedbackBlocks });
-
-      conversationStore.setHistory(channelId, threadTs, result.history);
+      await runAndStream(realSlackInput);
       return;
     }
 
-    // Normal agent path
+    if (
+      lowerText.includes('map this channel') ||
+      lowerText.includes('dependency map') ||
+      lowerText.includes('org map') ||
+      lowerText.includes('organizational map')
+    ) {
+      const messages = await getRecentChannelMessages(100, 60);
+
+      const dependencyMapInput = `
+You are Atlas, an AI Organizational Intelligence Platform.
+
+Analyze the following real Slack channel messages and build an Organizational Dependency Map.
+
+Important:
+- Use only the messages provided below as evidence.
+- If data is limited, say the map is preliminary.
+- Identify people, topics, ownership areas, knowledge hubs, bottlenecks, and knowledge transfer opportunities.
+- Do not invent names or facts not present in the messages.
+- If Slack user IDs appear, refer to them exactly as provided.
+
+Real Slack Channel Messages:
+${messages.length > 0 ? messages.join('\n') : 'No readable user messages found.'}
+
+Format:
+
+Atlas Organizational Dependency Map
+
+Scope:
+Data Confidence:
+
+Knowledge Hubs:
+- Person/User:
+  Ownership Areas:
+  Evidence:
+
+Operational Bottlenecks:
+- Bottleneck:
+  Dependency:
+  Risk:
+
+Topic Clusters:
+- Topic:
+  Related Users:
+  Signal:
+
+Recommended Knowledge Transfers:
+1.
+2.
+3.
+
+Atlas Insight:
+`;
+
+      await runAndStream(dependencyMapInput);
+      return;
+    }
+
     const history = conversationStore.getHistory(channelId, threadTs);
     /** @type {string | import('@openai/agents').AgentInputItem[]} */
     const inputItems = history ? [...history, { role: 'user', content: cleanedText }] : cleanedText;
 
-    const deps = new AgentDeps(client, userId, channelId, threadTs, event.ts, context.userToken);
-    const result = await runAgent(inputItems, deps);
-
-    const streamer = sayStream();
-    await streamer.append({ markdown_text: result.finalOutput });
-    const feedbackBlocks = buildFeedbackBlocks();
-    await streamer.stop({ blocks: feedbackBlocks });
-
-    conversationStore.setHistory(channelId, threadTs, result.history);
+    await runAndStream(inputItems);
   } catch (e) {
     logger.error(`Failed to handle app mention: ${e}`);
     await say({

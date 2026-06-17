@@ -11,7 +11,7 @@ export function buildAppHomeView(installUrl = null, isConnected = false) {
       type: 'header',
       text: {
         type: 'plain_text',
-        text: "Hey there :wave: I'm your Slack assistant.",
+        text: 'Atlas — Organizational Intelligence',
       },
     },
     {
@@ -19,72 +19,100 @@ export function buildAppHomeView(installUrl = null, isConnected = false) {
       text: {
         type: 'mrkdwn',
         text:
-          "I'm here to help! You can ask me questions, have a conversation, " +
-          'or ask me to do things in Slack.\n\n' +
-          'Send me a *direct message* or *mention me in a channel* to get started.',
+          '*Atlas helps teams detect hidden operational risks before they become business failures.*\n\n' +
+          'Analyze Slack conversations, identify knowledge silos, surface workflow bottlenecks, and generate executive-ready organizational health reports.',
+      },
+    },
+    { type: 'divider' },
+    {
+      type: 'section',
+      fields: [
+        {
+          type: 'mrkdwn',
+          text: '*Organization Health*\n78/100',
+        },
+        {
+          type: 'mrkdwn',
+          text: '*Current Status*\nWatch',
+        },
+        {
+          type: 'mrkdwn',
+          text: '*Top Risk*\nKnowledge Concentration',
+        },
+        {
+          type: 'mrkdwn',
+          text: '*Top Opportunity*\nApproval Automation',
+        },
+      ],
+    },
+    { type: 'divider' },
+    {
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: '*Quick Commands*',
+      },
+    },
+    {
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text:
+          '`@atlas analyze this channel`\n' +
+          'Generate a real channel health report from recent Slack messages.\n\n' +
+          '`@atlas risks`\n' +
+          'Show the Atlas Risk Radar.\n\n' +
+          '`@atlas executive summary`\n' +
+          'Create a leadership-ready brief.\n\n' +
+          '`@atlas scorecard`\n' +
+          'Show an organizational health scorecard.\n\n' +
+          '`@atlas map this channel`\n' +
+          'Build an organizational dependency map from channel activity.',
       },
     },
     { type: 'divider' },
   ];
 
   if (isConnected) {
-    blocks.push(
-      {
-        type: 'section',
-        text: {
-          type: 'mrkdwn',
-          text: '\ud83d\udfe2 *Slack MCP Server is connected.*',
-        },
+    blocks.push({
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: '🟢 *Slack MCP Server is connected.* Atlas can use enhanced Slack context.',
       },
-      {
-        type: 'context',
-        elements: [
-          {
-            type: 'mrkdwn',
-            text: 'The agent can search messages, read channels, and more.',
-          },
-        ],
-      },
-    );
+    });
   } else if (installUrl) {
-    blocks.push(
-      {
-        type: 'section',
-        text: {
-          type: 'mrkdwn',
-          text: `\ud83d\udd34 *Slack MCP Server is disconnected.* <${installUrl}|Connect the Slack MCP Server.>`,
-        },
+    blocks.push({
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: `🔴 *Slack MCP Server is disconnected.* <${installUrl}|Connect the Slack MCP Server.>`,
       },
-      {
-        type: 'context',
-        elements: [
-          {
-            type: 'mrkdwn',
-            text: 'The Slack MCP Server enables the agent to search messages, read channels, and more.',
-          },
-        ],
-      },
-    );
+    });
   } else {
-    blocks.push(
-      {
-        type: 'section',
-        text: {
-          type: 'mrkdwn',
-          text: '\ud83d\udd34 *Slack MCP Server is disconnected.* <https://github.com/slack-samples/bolt-js-starter-agent/blob/main/openai-agents-sdk/README.md#slack-mcp-server|Learn how to enable the Slack MCP Server.>',
-        },
+    blocks.push({
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text:
+          '🟡 *Real channel analysis is available through Slack bot history access.*\n' +
+          'MCP connection is optional for this demo, but can unlock broader Slack search and workspace intelligence.',
       },
-      {
-        type: 'context',
-        elements: [
-          {
-            type: 'mrkdwn',
-            text: 'The Slack MCP Server enables the agent to search messages, read channels, and more.',
-          },
-        ],
-      },
-    );
+    });
   }
+
+  blocks.push(
+    { type: 'divider' },
+    {
+      type: 'context',
+      elements: [
+        {
+          type: 'mrkdwn',
+          text: 'Built for the Slack Agent Builder Challenge.',
+        },
+      ],
+    },
+  );
 
   return { type: 'home', blocks };
 }
