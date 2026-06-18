@@ -19,7 +19,7 @@ export async function handleAppMentioned({ client, context, event, logger, say, 
 
     if (!cleanedText) {
       await say({
-        text: 'Atlas is ready. Try `analyze this channel`, `risks`, `scorecard`, `map this channel`, or `action plan`.',
+        text: 'Atlas is ready. Try `analyze this channel`, `risks`, `scorecard`, `map this channel`, `action plan`, or `trends`.',
         thread_ts: threadTs,
       });
       return;
@@ -215,6 +215,59 @@ Atlas Recommendation:
 `;
 
       await runAndStream(actionPlanInput);
+      return;
+    }
+
+    if (
+      lowerText.includes('trends') ||
+      lowerText.includes('trend analysis') ||
+      lowerText.includes('risk trend') ||
+      lowerText.includes('organizational trends')
+    ) {
+      const messages = await getRecentChannelMessages(100, 60);
+
+      const trendInput = `
+You are Atlas, an AI Organizational Intelligence Platform.
+
+Analyze the Slack messages below and generate an organizational trend analysis.
+
+Important:
+- Use only the evidence provided.
+- If there is limited historical data, frame trends as "early signals" rather than proven long-term trends.
+- Identify whether risks appear stable, improving, or escalating.
+- Focus on approval delays, documentation gaps, knowledge concentration, onboarding friction, and workflow blockers.
+- Do not invent facts not present in the messages.
+
+Slack Messages:
+${messages.length > 0 ? messages.join('\n') : 'No readable user messages found.'}
+
+Format:
+
+Atlas Organizational Trend Analysis
+
+Trend Window:
+Data Confidence:
+Risk Direction:
+
+Key Trends:
+1.
+2.
+3.
+
+Leading Indicators:
+- Approval Flow:
+- Documentation Health:
+- Knowledge Distribution:
+- Onboarding Readiness:
+
+Trend Interpretation:
+
+Recommended Next Move:
+
+Atlas Forecast:
+`;
+
+      await runAndStream(trendInput);
       return;
     }
 
