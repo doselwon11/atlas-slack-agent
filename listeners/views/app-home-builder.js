@@ -67,7 +67,9 @@ export function buildAppHomeView(installUrl = null, isConnected = false) {
           '`@atlas scorecard`\n' +
           'Show an organizational health scorecard.\n\n' +
           '`@atlas map this channel`\n' +
-          'Build an organizational dependency map from channel activity.',
+          'Build an organizational dependency map from channel activity.\n\n' +
+          '`@atlas action plan`\n' +
+          'Generate a 30-day operational improvement plan from channel signals.',
       },
     },
     { type: 'divider' },

@@ -19,7 +19,7 @@ export async function handleAppMentioned({ client, context, event, logger, say, 
 
     if (!cleanedText) {
       await say({
-        text: 'Atlas is ready. Try `analyze this channel`, `risks`, `scorecard`, or `map this channel`.',
+        text: 'Atlas is ready. Try `analyze this channel`, `risks`, `scorecard`, `map this channel`, or `action plan`.',
         thread_ts: threadTs,
       });
       return;
@@ -151,6 +151,70 @@ Atlas Insight:
 `;
 
       await runAndStream(dependencyMapInput);
+      return;
+    }
+
+    if (
+      lowerText.includes('action plan') ||
+      lowerText.includes('remediation plan') ||
+      lowerText.includes('improvement plan') ||
+      lowerText.includes('operational plan')
+    ) {
+      const messages = await getRecentChannelMessages(100, 60);
+
+      const actionPlanInput = `
+You are Atlas, an AI Organizational Intelligence Platform.
+
+Analyze the Slack messages below and generate a practical 30-day operational improvement plan.
+
+Important:
+- Use only the evidence provided.
+- Prioritize the most impactful risks.
+- Focus on realistic actions leadership can take.
+- Include expected outcomes.
+- If data is limited, say the plan is preliminary.
+- Do not invent names or facts not present in the messages.
+
+Slack Messages:
+${messages.length > 0 ? messages.join('\n') : 'No readable user messages found.'}
+
+Format:
+
+Atlas Operational Action Plan
+
+Current Health Status:
+Top Risk:
+Primary Opportunity:
+
+Week 1
+Owner:
+Actions:
+Expected Outcome:
+
+Week 2
+Owner:
+Actions:
+Expected Outcome:
+
+Week 3
+Owner:
+Actions:
+Expected Outcome:
+
+Week 4
+Owner:
+Actions:
+Expected Outcome:
+
+Expected Business Impact
+- Time Saved:
+- Risk Reduction:
+- Operational Improvement:
+
+Atlas Recommendation:
+`;
+
+      await runAndStream(actionPlanInput);
       return;
     }
 
