@@ -1,311 +1,494 @@
-# Starter Agent for Slack (Bolt for JavaScript and OpenAI Agents SDK)
+# Atlas — Organizational Intelligence Agent for Slack
 
-A minimal starter template for building AI-powered Slack agents with [Bolt for JavaScript](https://docs.slack.dev/tools/bolt-js/) and [OpenAI Agents SDK](https://openai.github.io/openai-agents-js/) using models from [OpenAI](https://openai.com). Works with the [Slack MCP Server](https://github.com/slackapi/slack-mcp-server) to search messages, read channels, send messages, and manage canvases — all from within your agent.
+**Atlas** is an AI-powered organizational intelligence agent built for Slack. It analyzes real Slack channel activity to detect hidden operational risks, knowledge silos, documentation gaps, workflow bottlenecks, onboarding friction, and collaboration issues before they become business failures.
 
-## App Overview
+Atlas is not a generic chatbot. It is designed as a Slack-native organizational health monitor that turns everyday conversations into executive-ready intelligence.
 
-The starter agent interacts with users through four entry points:
+## Project Summary
 
-* **App Home** — Displays a welcome message with instructions on how to interact.
-* **Direct Messages** — Users message the agent directly. It responds in-thread, maintaining context across follow-ups.
-* **Channel @mentions** — Mention the agent in any channel to get a response without leaving the conversation.
-* **Assistant Panel** — Users click _Add Agent_ in Slack, select the agent, and pick from suggested prompts or type a message.
+Modern teams often reveal their most important operational risks inside Slack before those risks appear in dashboards, tickets, reports, or meetings.
 
-The template also includes one example tool (emoji reactions). Add your own tools to customize it for your use case.
+Atlas helps teams answer questions like:
 
-### Slack MCP Server
+* Who owns critical knowledge?
+* Where are workflows blocked?
+* What documentation is missing?
+* Which approvals are slowing teams down?
+* Are operational risks improving or escalating?
+* What should leadership do next?
 
-When connected to the [Slack MCP Server](https://github.com/slackapi/slack-mcp-server), the agent can search messages and files, read channel history and threads, send and schedule messages, and create and update canvases. When deployed with OAuth (HTTP mode), the agent automatically connects to the Slack MCP Server using the user's token.
+Atlas analyzes Slack conversations and generates:
+
+* Organizational Health Reports
+* Risk Radar Reports
+* Executive Briefs
+* Organizational Scorecards
+* Dependency Maps
+* 30-Day Operational Action Plans
+* Trend Analysis
+
+## Why Atlas Matters
+
+Teams rarely fail because people are not working hard.
+
+They fail because:
+
+* critical knowledge gets trapped in a few people
+* approvals silently become bottlenecks
+* documentation falls behind reality
+* new hires repeatedly ask the same questions
+* leaders discover operational risk too late
+
+Atlas helps teams detect those patterns directly inside Slack.
+
+## Core Workflow
+
+```
+Slack conversations
+        ↓
+Atlas reads recent channel activity
+        ↓
+Atlas detects organizational signals
+        ↓
+Atlas identifies risks and dependencies
+        ↓
+Atlas generates reports, maps, action plans, and forecasts
+        ↓
+Teams act before small problems become business failures
+```
+
+## Key Features
+### Real Slack Channel Analysis
+
+Command:
+
+```
+@atlas analyze this channel
+```
+
+Atlas reads recent messages from the current Slack channel using the Slack Web API and generates an organizational health report.
+
+It looks for:
+
+* repeated questions
+* unresolved issues
+* approval delays
+* documentation gaps
+* workflow bottlenecks
+* collaboration friction
+* operational risks
+
+### Risk Radar
+
+Command:
+```
+@atlas risks
+```
+Atlas generates a prioritized organizational risk report, including:
+* risk score
+* severity
+* signals
+* business impact
+* recommended interventions
+
+###Executive Brief
+
+Command:
+```
+@atlas executive summary
+```
+Atlas creates a leadership-ready summary with:
+* organization health
+* top risk
+* biggest opportunity
+* key metrics
+* recommended leadership action
+
+### Organizational Scorecard
+
+Command:
+```
+@atlas scorecard
+```
+Atlas generates a scorecard across:
+* collaboration health
+* knowledge distribution
+* documentation coverage
+* workflow efficiency
+* operational resilience
+* onboarding readiness
+
+### Dependency Map
+
+Command:
+```
+@atlas map this channel
+```
+Atlas builds an organizational dependency map from Slack messages.
+
+It identifies:
+* knowledge hubs
+* ownership areas
+* operational bottlenecks
+* topic clusters
+* knowledge transfer opportunities
+
+### Operational Action Plan
+
+Command:
+```
+@atlas action plan
+```
+Atlas generates a practical 30-day operational improvement plan with:
+* weekly actions
+* suggested owners
+* expected outcomes
+* business impact
+* leadership recommendation
+
+### Trend Analysis
+
+Command:
+```
+@atlas trends
+```
+Atlas analyzes whether organizational risks appear to be:
+* improving
+* stable
+* escalating
+
+It focuses on early signals around approvals, documentation, knowledge distribution, onboarding readiness, and workflow blockers.
+
+### App Home Dashboard
+
+Atlas includes a Slack App Home dashboard showing:
+* organization health
+* current status
+* top risk
+* top opportunity
+* quick commands
+* Slack-native usage instructions
+
+## Example Demo Scenario
+
+A demo engineering channel may include messages like:
+```
+Sarah: Can someone approve the API Gateway deployment? It has been waiting since Monday. Mike: I can’t approve it because Sarah is the only one who knows the rollback steps. Emily: Where is the deployment runbook? I asked last week too. Priya: New hires keep asking how to deploy to staging. Sarah: I can review tomorrow, but I’m overloaded today. John: The release is blocked until API Gateway approval is done.
+```
+
+Atlas detects:
+* knowledge concentration around Sarah
+* API Gateway approval bottleneck
+* missing deployment runbook
+* onboarding friction
+* release delay risk
+
+Atlas can then generate:
+* an Organizational Health Report
+* a Dependency Map
+* an Operational Action Plan
+* a Trend Analysis Forecast 
+
+## Tech Stack
+* Slack Bolt for JavaScript
+* Slack Agent Builder starter template
+* Slack Web API
+* Slack App Home
+* Slack Socket Mode
+* OpenAI Agents SDK
+* GPT-4.1 Mini
+* Node.js
+* JavaScript
+
+## Slack Capabilities Used
+
+Atlas uses Slack as the primary surface for organizational intelligence.
+
+Core Slack capabilities:
+
+* App mentions
+* Slack assistant interface
+* Slack App Home
+* Message event handling
+* Threaded responses
+* Feedback buttons
+* conversations.history for real channel analysis
+
+The project is also structured for future extension through Slack MCP Server and Real-Time Search API integrations.
+
+App Overview
+
+Atlas interacts with users through four Slack entry points:
+
+* **App Home** — Displays Atlas dashboard, project overview, and quick commands.
+* **Direct Messages** — Users can message Atlas directly and continue threaded conversations.
+* **Channel @mentions** — Users can mention Atlas inside a channel to analyze real channel activity.
+* **Assistant Panel** — Users can interact with Atlas through Slack’s assistant interface.
 
 ## Setup
 
-Before getting started, make sure you have a development workspace where you have permissions to install apps.
+Before getting started, make sure you have a development workspace where you have permission to install Slack apps.
 
-### Developer Program
+## Developer Program
 
-Join the [Slack Developer Program](https://api.slack.com/developer-program) for exclusive access to sandbox environments for building and testing your apps, tooling, and resources created to help you build and grow.
+Join the Slack Developer Program for access to sandbox environments, tooling, and resources for building and testing Slack apps.
 
-### Create the Slack app
-
-<details><summary><strong>Using Slack CLI</strong></summary>
+## Create the Slack App
+### Using Slack CLI
 
 Install the latest version of the Slack CLI for your operating system:
+* Slack CLI for macOS & Linux
+* Slack CLI for Windows
 
-* [Slack CLI for macOS & Linux](https://docs.slack.dev/tools/slack-cli/guides/installing-the-slack-cli-for-mac-and-linux/)
-* [Slack CLI for Windows](https://docs.slack.dev/tools/slack-cli/guides/installing-the-slack-cli-for-windows/)
-
-You'll also need to log in if this is your first time using the Slack CLI.
-
-```sh
+Log in if this is your first time using the Slack CLI:
+```
 slack login
 ```
-
-#### Initializing the project
-
-```sh
-slack create my-starter-agent --template slack-samples/bolt-js-starter-agent --subdir openai-agents-sdk
-cd my-starter-agent
+Create or initialize the project:
 ```
+slack create atlas
+cd atlas
+```
+If this is an existing Slack project, initialize it with:
+```
+slack init
+```
+### Using App Settings
+1. Open Slack API app creation.
+2. Choose From an app manifest.
+3. Choose the workspace where you want to install Atlas.
+4. Copy the contents of manifest.json into the JSON manifest editor.
+5. Review the configuration and create the app.
+6. Install the app to your workspace.
+7. Copy the required tokens into .env.
 
-</details>
+### Environment Variables
 
-<details><summary><strong>Using App Settings</strong></summary>
-
-#### Create Your Slack App
-
-1. Open [https://api.slack.com/apps/new](https://api.slack.com/apps/new) and choose "From an app manifest"
-2. Choose the workspace you want to install the application to
-3. Copy the contents of [manifest.json](./manifest.json) into the text box that says `*Paste your manifest code here*` (within the JSON tab) and click _Next_
-4. Review the configuration and click _Create_
-5. Click _Install to Workspace_ and _Allow_ on the screen that follows. You'll then be redirected to the App Configuration dashboard.
-
-#### Environment Variables
-
-Before you can run the app, you'll need to store some environment variables.
-
-1. Rename `.env.sample` to `.env`.
-2. Open your apps setting page from [this list](https://api.slack.com/apps), click _OAuth & Permissions_ in the left hand menu, then copy the _Bot User OAuth Token_ into your `.env` file under `SLACK_BOT_TOKEN`.
-
-```sh
+Before running the app, create a `.env` file from `.env.sample`:
+```
+cp .env.sample .env
+```
+Add the required values:
+```
+OPENAI_API_KEY=YOUR_OPENAI_API_KEY
 SLACK_BOT_TOKEN=YOUR_SLACK_BOT_TOKEN
-```
-
-3. Click _Basic Information_ from the left hand menu and follow the steps in the _App-Level Tokens_ section to create an app-level token with the `connections:write` scope. Copy that token into your `.env` as `SLACK_APP_TOKEN`.
-
-```sh
 SLACK_APP_TOKEN=YOUR_SLACK_APP_TOKEN
 ```
+Do not commit `.env`.
 
-#### Initializing the project
-
-```sh
-git clone https://github.com/slack-samples/bolt-js-starter-agent.git my-starter-agent
-cd my-starter-agent/openai-agents-sdk
+## Install Dependencies
 ```
-
-</details>
-
-#### Install dependencies
-
-```sh
 npm install
 ```
 
-## Providers
+## OpenAI Setup
 
-### OpenAI Setup
-
-This app uses OpenAI's `gpt-4.1-mini` model through the OpenAI Agents SDK.
-
-1. Create an API key from your [OpenAI dashboard](https://platform.openai.com/api-keys).
-2. Rename `.env.sample` to `.env`.
-3. Save the OpenAI API key to `.env`:
-
-```sh
+Atlas uses OpenAI through the OpenAI Agents SDK.
+1. Create an API key from the OpenAI dashboard.
+2. Add the key to .env.
+```
 OPENAI_API_KEY=YOUR_OPENAI_API_KEY
 ```
 
 ## Development
-
-### Starting the app
-
-<details><summary><strong>Using the Slack CLI</strong></summary>
-
-#### Slack CLI
-
-```sh
+### Start the App with Slack CLI
+```
 slack run
 ```
-
-</details>
-
-<details><summary><strong>Using the Terminal</strong></summary>
-
-#### Terminal
-
-```sh
+### Start the App with Terminal
+```
 npm start
 ```
 
-</details>
+## OAuth HTTP Server Mode
 
-<details><summary><strong>Using OAuth HTTP Server (with ngrok)</strong></summary>
+Atlas can also run in HTTP mode instead of Socket Mode. This is useful for OAuth-based distribution.
 
-#### OAuth HTTP Server
-
-This mode uses an HTTP server instead of Socket Mode, which is required for OAuth-based distribution.
-
-1. Install [ngrok](https://ngrok.com/download) and start a tunnel:
-
-```sh
+### Using ngrok
+1. Install ngrok.
+2. Start a tunnel:
+```
 ngrok http 3000
 ```
-
-2. Copy the `https://*.ngrok-free.app` URL from the ngrok output.
-
-<details><summary><strong>Using Slack CLI</strong></summary>
-
-#### Slack CLI
-
-3. Update `manifest.json` for HTTP mode:
-   - Set `socket_mode_enabled` to `false`
-   - Replace `ngrok-free.app` with your ngrok domain (e.g. `YOUR_NGROK_SUBDOMAIN.ngrok-free.app`)
-
-4. Create a new local dev app:
-
-```sh
-slack install -E local
+3. Copy the https://*.ngrok-free.app URL.
+4. Update `manifest.json`:
+  * Set `socket_mode_enabled` to `false`
+  * Replace `ngrok-free.app` with your `ngrok` domain
+5. Update `.env`:
 ```
-
-5. _(Slack CLI < v4.1.0 only)_ Enable MCP for your app:
-   - Run `slack app settings` to open your app's settings
-   - Navigate to **Agents & AI Apps** in the left-side navigation
-   - Toggle **Model Context Protocol** on
-
-6. Update your `.env` OAuth environment variables:
-   - Run `slack app settings` to open App Settings
-   - Copy **Client ID**, **Client Secret**, and **Signing Secret**
-   - Update `SLACK_REDIRECT_URI` in `.env` with your ngrok domain
-
-```sh
 SLACK_CLIENT_ID=YOUR_CLIENT_ID
 SLACK_CLIENT_SECRET=YOUR_CLIENT_SECRET
 SLACK_REDIRECT_URI=https://YOUR_NGROK_SUBDOMAIN.ngrok-free.app/slack/oauth_redirect
 SLACK_SIGNING_SECRET=YOUR_SIGNING_SECRET
 ```
-
-7. Start the app:
-
-```sh
+6. Start the OAuth app:
+```
 slack run app-oauth.js
 ```
-
-8. Click the install URL printed in the terminal to install the app to your workspace via OAuth.
-
-</details>
-
-<details><summary><strong>Using the Terminal</strong></summary>
-
-#### Terminal
-
-3. Create your Slack app at [api.slack.com/apps/new](https://api.slack.com/apps/new) using [`manifest.json`](./manifest.json). Before pasting the manifest, set `socket_mode_enabled` to `false` and replace `ngrok-free.app` with your ngrok domain.
-
-4. Install the app to your workspace and copy the following values into your `.env`:
-   - **Signing Secret** — from _Basic Information_
-   - **Bot User OAuth Token** — from _OAuth & Permissions_
-   - **Client ID** and **Client Secret** — from _Basic Information_
-
-```sh
-SLACK_SIGNING_SECRET=YOUR_SIGNING_SECRET
-SLACK_BOT_TOKEN=xoxb-YOUR_BOT_TOKEN
-SLACK_CLIENT_ID=YOUR_CLIENT_ID
-SLACK_CLIENT_SECRET=YOUR_CLIENT_SECRET
-SLACK_REDIRECT_URI=https://YOUR_NGROK_SUBDOMAIN.ngrok-free.app/slack/oauth_redirect
+or:
 ```
-
-Replace `your-subdomain` in `SLACK_REDIRECT_URI` with your ngrok subdomain.
-
-5. Start the app:
-
-```sh
 node app-oauth.js
 ```
+7. Click the install URL printed in the terminal.
 
-6. Click the install URL printed in the terminal to install the app to your workspace via OAuth.
+  Note: Each time `ngrok` restarts, it generates a new URL. Update the ngrok domain in `manifest.json`, `SLACK_REDIRECT_URI`, and reinstall the app if needed.
 
-</details>
+## Using Atlas
 
-> **Note:** Each time ngrok restarts, it generates a new URL. You'll need to update the ngrok domain in `manifest.json`, `SLACK_REDIRECT_URI` in your `.env`, and re-install the app.
+Once Atlas is running, invite it to a channel:
+```
+/invite @atlas
+```
+Then try:
+```
+@atlas analyze this channel
+@atlas risks
+@atlas executive summary
+@atlas scorecard
+@atlas map this channel
+@atlas action plan
+@atlas trends
+```
+Atlas replies in a thread so the channel stays clean.
 
-</details>
+## Project Structure
+```
+manifest.json
+```
+Slack app configuration, including app features, OAuth scopes, event subscriptions, assistant view, App Home, Socket Mode, and MCP settings.
+```
+app.js
+```
+Main application entry point. It initializes the Slack Bolt app and registers listeners.
+```
+app-oauth.js
+```
+Alternative entry point for HTTP/OAuth mode. This is intended for deployments that use OAuth-based installation.
+```
+/listeners
+```
+Contains Slack request and event handlers.
+```
+/listeners/events
+```
+* `app-home-opened.js` — Publishes the Atlas App Home dashboard.
+* `app-mentioned.js` — Handles channel @mentions and routes Atlas commands.
+* `message.js` — Handles direct messages and threaded conversations.
+* `assistant-thread-started.js` — Sets suggested prompts for assistant threads.
+`/listeners/actions`
+* `feedback-buttons.js` — Handles feedback interactions on Atlas responses.
+`/listeners/views`
+* `app-home-builder.js` — Builds the Atlas App Home dashboard.
+* `feedback-builder.js` — Builds feedback button blocks attached to responses.
+```
+/agent
+```
+Contains the OpenAI Agents SDK setup.
 
-### Using the App
+* `agent.js` — Defines the Atlas agent, system prompt, model, and tools.
+* `deps.js` — Defines runtime dependencies passed to the agent.
+* `/tools` — Contains agent tools such as emoji reactions.
+```
+/thread-context
+```
+Stores in-memory conversation history by channel and thread, enabling multi-turn threaded conversations.
 
-Once the agent is running, there are several ways to interact:
-
-**App Home** — Open the agent in Slack and click the _Home_ tab. You'll see a welcome message with instructions on how to interact.
-
-**Direct Messages** — Open a DM with the agent. You'll see suggested prompts like _Write a Message_, _Summarize_, and _Brainstorm_ — pick one or type your own message. The agent replies in a thread. Send follow-up messages in the same thread and the agent will maintain the full conversation context.
-
-**Channel @mentions** — Invite the agent to a channel by typing `/invite @agent-name` in the message box, then @mention it followed by your message. The agent responds in a thread so the channel stays clean.
-
-**Assistant Panel** — Click _Add Agent_ in the top-right corner of Slack, select the agent from the list, then pick a suggested prompt or type a message.
-
-### Linting
-
-```sh
-# Run Biome for linting and formatting
+## Linting
+```
 npm run lint
-
-# Auto-fix lint and format issues
+```
+Auto-fix lint and formatting issues:
+```
 npm run lint:fix
 ```
 
-### Testing
-
-```sh
-# Run unit tests
+## Testing
+```
 npm test
 ```
 
-## Project Structure
+## Security Notes
 
-### `manifest.json`
+Never commit `.env`.
 
-`manifest.json` is a configuration for Slack apps. With a manifest, you can create an app with a pre-defined configuration, or adjust the configuration of an existing app.
+Use `.env.sample` only for placeholder values.
 
-### `app.js`
+Recommended:
 
-`app.js` is the entry point for the application and is the file you'll run to start the server. This project aims to keep this file as thin as possible, primarily using it as a way to route inbound requests.
+* `.env`
+* `.env.*`
+* `!.env.sample`
+* `node_modules`
 
-### `app-oauth.js`
-
-`app-oauth.js` is an alternative entry point that runs the app in HTTP mode instead of Socket Mode. This is intended for deployments that use OAuth for app distribution. See the OAuth HTTP Server section under Development for setup instructions.
-
-### `/listeners`
-
-Every incoming request is routed to a "listener". This directory groups each listener based on the Slack Platform feature used.
-
-**`/listeners/events`** — Handles incoming events:
-
-* `app-home-opened.js` — Publishes the App Home view with a welcome message and MCP status.
-* `app-mentioned.js` — Responds to @mentions in channels.
-* `message.js` — Responds to direct messages from users.
-* `assistant-thread-started.js` — Sets suggested prompts for assistant threads.
-
-**`/listeners/actions`** — Handles interactive components:
-
-* `feedback-buttons.js` — Handles thumbs up/down feedback on agent responses.
-
-**`/listeners/views`** — Builds Block Kit views:
-
-* `app-home-builder.js` — Constructs the App Home Block Kit view.
-* `feedback-builder.js` — Creates the feedback button block attached to responses.
-
-### `/agent`
-
-The `agent.js` file defines the OpenAI Agents SDK Agent with a system prompt, personality, and tool configuration.
-
-The `deps.js` file defines the `AgentDeps` class passed to the agent at runtime, providing access to the Slack client and conversation context.
-
-The `tools` directory contains one example tool (emoji reaction) defined using `tool()` from `@openai/agents`. Add your own tools to customize the agent for your use case.
-
-### `/thread-context`
-
-The `store.js` file implements an in-memory conversation history store, keyed by channel and thread. This enables multi-turn conversations where the agent remembers previous context within a thread. The store has TTL-based cleanup (24 hours) and a max entry limit (1000).
+If an API key is ever committed or exposed, revoke it immediately and generate a new one.
 
 ## Troubleshooting
+### Slack CLI says the project is not initialized
 
-### MCP Server connection error: `App is not enabled for Slack MCP server access`
-
-If you see an error like:
-
+If you see:
 ```
-Error: Streamable HTTP error: Error POSTing to endpoint: {"jsonrpc":"2.0","id":null,"error":{"code":-32600,"message":"App is not enabled for Slack MCP server access. Please enable it here: https://api.slack.com/apps/YOUR_APP_ID/app-assistant"}}
+If this is a Slack project, you can initialize it with `slack init`
+```
+run:
+```
+slack init
+```
+Then run:
+```
+slack run
 ```
 
-This means the Slack MCP feature has not been enabled for your app. There is no manifest property for this yet, so it must be toggled on manually:
+### MCP Server connection error
 
-1. Run `slack app settings` to open your app's settings page (or visit [api.slack.com/apps](https://api.slack.com/apps) and select your app)
-2. Navigate to **Agents & AI Apps** in the left-side navigation
-3. Toggle **Slack Model Context Protocol** on
+If you see an error saying the app is not enabled for Slack MCP server access, enable MCP manually:
+
+1. Run:
+`slack app settings`
+2. Open the app settings page.
+3. Navigate to Agents & AI Apps.
+4. Toggle Slack Model Context Protocol on.
+
+Atlas does not require MCP for the main demo flow because real channel analysis uses Slack Web API channel history, but MCP can unlock broader future workspace intelligence.
+
+### Slack manifest validation error for `search:read`
+
+Slack does not allow `search:read` as a bot scope.
+
+Keep search scopes under user scopes only.
+
+Do not place this in bot scopes:
+
+`"search:read"`
+
+### OpenAI quota error
+
+If you see a 429 quota or billing error, check OpenAI API billing and usage. ChatGPT Plus does not automatically include OpenAI API credits.
+
+## Hackathon Track
+
+Atlas is designed for the Slack Agent Builder Challenge as a new Slack agent.
+
+It solves a specific workflow problem inside Slack: operational risks are hidden in everyday conversations, and leaders often discover them too late.
+
+## Judging Criteria Alignment
+### Technological Implementation
+
+Atlas uses Slack Bolt, Slack Agent Builder, Slack Web API channel history, Slack App Home, threaded Slack responses, structured command routing, and the OpenAI Agents SDK.
+
+### Design
+
+Atlas provides a Slack-native experience through App Home, clean threaded reports, structured Markdown outputs, and clear commands.
+
+### Potential Impact
+
+Atlas can help engineering teams, operations teams, startups, nonprofits, schools, public sector teams, and enterprises identify operational risks earlier.
+
+### Quality of Idea
+
+Atlas improves on generic workplace AI assistants by focusing on organizational intelligence: risk detection, dependency mapping, documentation debt, workflow bottlenecks, and team resilience.
+
+## Project Vision
+
+Atlas aims to become an organizational health monitor for modern teams.
+
+The long-term vision is a Slack-native intelligence layer that continuously maps how work actually happens, detects risks early, and helps teams become more resilient.
